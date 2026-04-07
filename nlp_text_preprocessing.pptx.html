@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Text Pre-processing and Word Level Analysis</title>
+<script src="https://statics.moonshot.cn/kimi-ppt/html-gen/static/tailwindcss@4_0805.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdmirror.com/npm/mathjax@3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .ppt-slide {
+                @apply relative w-[1280px] h-[720px] mx-auto p-[40px] box-border overflow-hidden mb-[40px];
+            }
+        }
+    </style>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2C3E50;
+        }
+        .code-block {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1E3A5F;
+            color: #F8F9FA;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 py-8">
+<!-- Slide 1: Cover -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="cover">
+<img alt="NLP Cover" class="absolute inset-0 w-full h-full object-cover" src="./nlp_cover.png"/>
+<div class="absolute inset-0 bg-gradient-to-r from-[#1E3A5F]/95 via-[#1E3A5F]/85 to-transparent"></div>
+<div class="relative h-full flex flex-col justify-center z-10 max-w-[700px]">
+<div class="text-[#E8913A] text-sm font-bold tracking-[0.3em] mb-4 uppercase">UNIT IV</div>
+<h1 class="text-[72px] font-bold text-[#F8F9FA] leading-[1.1] mb-6">Text Pre-processing<br/>and Word Level<br/>Analysis</h1>
+<p class="text-[24px] text-[#F8F9FA]/90 font-light">Foundations of Natural Language Processing</p>
+</div>
+</div>
+<!-- Slide 2: Table of Contents -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="table_of_contents">
+<div class="h-full flex flex-col">
+<div class="mb-8">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Overview</p>
+<h2 class="text-[48px] font-bold text-[#1E3A5F] leading-tight">Learning Journey</h2>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-6">
+<div class="bg-[#1E3A5F] p-8 rounded-lg text-white flex flex-col justify-center">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-2xl shrink-0">01</div>
+<h3 class="text-2xl font-bold">Foundations</h3>
+</div>
+<p class="text-lg text-white/90 leading-relaxed">Origins and Challenges of NLP</p>
+<p class="text-base text-white/70 mt-2">Historical evolution, key milestones, and fundamental challenges in natural language processing</p>
+</div>
+<div class="bg-[#4A90A4] p-8 rounded-lg text-white flex flex-col justify-center">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-2xl shrink-0">02</div>
+<h3 class="text-2xl font-bold">Pattern Matching</h3>
+</div>
+<p class="text-lg text-white/90 leading-relaxed">Regular Expressions</p>
+<p class="text-base text-white/70 mt-2">Pattern syntax, building blocks, and practical text extraction applications</p>
+</div>
+<div class="bg-[#4A90A4] p-8 rounded-lg text-white flex flex-col justify-center">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-2xl shrink-0">03</div>
+<h3 class="text-2xl font-bold">Text Preparation</h3>
+</div>
+<p class="text-lg text-white/90 leading-relaxed">Words, Corpora, and Normalization</p>
+<p class="text-base text-white/70 mt-2">Tokenization, stemming, lemmatization, and the preprocessing pipeline</p>
+</div>
+<div class="bg-[#1E3A5F] p-8 rounded-lg text-white flex flex-col justify-center">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-2xl shrink-0">04</div>
+<h3 class="text-2xl font-bold">String Comparison</h3>
+</div>
+<p class="text-lg text-white/90 leading-relaxed">Minimum Edit Distance</p>
+<p class="text-base text-white/70 mt-2">Levenshtein distance, dynamic programming, and similarity measurement</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 3: Chapter 1 -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="chapter">
+<img alt="History Chapter" class="absolute inset-0 w-full h-full object-cover" src="./nlp_history_chapter.png"/>
+<div class="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/90 via-[#1E3A5F]/80 to-[#1E3A5F]/95"></div>
+<div class="relative h-full flex flex-col justify-center items-center text-center z-10">
+<div class="text-[#E8913A] text-xl font-bold tracking-[0.3em] mb-6 uppercase">Chapter 01</div>
+<h1 class="text-[80px] font-bold text-[#F8F9FA] leading-[1.1] mb-6">Foundations</h1>
+<p class="text-[32px] text-[#F8F9FA]/90 font-light">Origins and Challenges of NLP</p>
+<div class="mt-12 w-32 h-1 bg-[#E8913A]"></div>
+</div>
+</div>
+<!-- Slide 4: What is NLP? -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-6">
+<p class="text-[#E8913A] text-base font-semibold tracking-wider mb-2">INTRODUCTION</p>
+<h2 class="text-4xl font-bold text-[#1E3A5F]">What is Natural Language Processing?</h2>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-semibold text-[#1E3A5F] mb-3">Definition</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3"><strong>Natural Language Processing (NLP)</strong> is a field at the intersection of <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>linguistics</strong></span>, <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>computer science</strong></span>, and <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>artificial intelligence</strong></span>. It enables computers to understand, interpret, and generate human language in valuable ways.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">NLP bridges the gap between human communication and machine comprehension, allowing seamless interaction between humans and technology.</p>
+</div>
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-semibold text-[#1E3A5F] mb-3">Core Objectives</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3">
+<i class="fas fa-brain text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-[#1E3A5F] text-base">Understanding Meaning</p>
+<p class="text-sm text-[#2C3E50]/80">Extract semantic content from text and speech</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-sitemap text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-[#1E3A5F] text-base">Analyzing Structure</p>
+<p class="text-sm text-[#2C3E50]/80">Recognize grammar, syntax, and sentence construction</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-comments text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-[#1E3A5F] text-base">Generating Language</p>
+<p class="text-sm text-[#2C3E50]/80">Create natural, coherent, grammatically correct text</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-[#1E3A5F] p-5 rounded-lg text-white">
+<h3 class="text-xl font-semibold mb-4">Real-World Applications</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-robot text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Virtual Assistants</p>
+<p class="text-sm text-white/80">Siri, Alexa, ChatGPT</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-language text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Translation</p>
+<p class="text-sm text-white/80">Google Translate</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-search text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Search Engines</p>
+<p class="text-sm text-white/80">Google, Bing</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-smile text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Sentiment Analysis</p>
+<p class="text-sm text-white/80">Brand monitoring</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-file-medical text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Healthcare</p>
+<p class="text-sm text-white/80">Medical record analysis</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<i class="fas fa-balance-scale text-[#E8913A] text-xl mb-2"></i>
+<p class="font-semibold text-base">Legal &amp; Finance</p>
+<p class="text-sm text-white/80">Contract analysis</p>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<p class="text-base text-[#2C3E50]"><strong>Key Insight:</strong> NLP transforms unstructured text into structured data that machines can process, analyze, and learn from.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 5: Four Eras of NLP -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-5">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Historical Evolution</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">The Four Eras of NLP Evolution</h2>
+</div>
+<div class="space-y-3">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-xl shrink-0">1</div>
+<div class="flex-1 bg-[#1E3A5F]/5 p-4 rounded-lg">
+<div class="flex items-baseline gap-3 mb-2">
+<h3 class="text-xl font-bold text-[#1E3A5F]">Early Explorations</h3>
+<span class="text-base text-[#4A90A4] font-semibold">1940-1969</span>
+</div>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-2"><strong>Machine Translation (MT)</strong> was the primary driving force. Researchers believed translation was a simple substitution task. Rule-based systems emerged with handcrafted linguistic rules.</p>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">Rule-Based Systems</span>
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">Georgetown-IBM Experiment</span>
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">Turing Test (1950)</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-full bg-[#4A90A4] flex items-center justify-center text-white font-bold text-xl shrink-0">2</div>
+<div class="flex-1 bg-[#4A90A4]/5 p-4 rounded-lg">
+<div class="flex items-baseline gap-3 mb-2">
+<h3 class="text-xl font-bold text-[#1E3A5F]">Symbolic Systems Era</h3>
+<span class="text-base text-[#4A90A4] font-semibold">1970-1992</span>
+</div>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-2">Hand-built symbolic NLP systems with increasing formalization. Focus on <strong>parsing, semantic composition, and knowledge representation</strong>. ELIZA chatbot demonstrated pattern matching.</p>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 bg-[#4A90A4]/10 text-[#1E3A5F] text-sm rounded-full">ELIZA (1966)</span>
+<span class="px-3 py-1 bg-[#4A90A4]/10 text-[#1E3A5F] text-sm rounded-full">Formal Grammars</span>
+<span class="px-3 py-1 bg-[#4A90A4]/10 text-[#1E3A5F] text-sm rounded-full">SHRDLU System</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-xl shrink-0">3</div>
+<div class="flex-1 bg-[#E8913A]/5 p-4 rounded-lg">
+<div class="flex items-baseline gap-3 mb-2">
+<h3 class="text-xl font-bold text-[#1E3A5F]">Statistical Revolution</h3>
+<span class="text-base text-[#4A90A4] font-semibold">1993-2012</span>
+</div>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-2">Shift from handcrafted rules to <strong>data-driven approaches</strong>. Probabilistic models and supervised machine learning dominated. Large annotated corpora became essential.</p>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 bg-[#E8913A]/10 text-[#1E3A5F] text-sm rounded-full">Hidden Markov Models</span>
+<span class="px-3 py-1 bg-[#E8913A]/10 text-[#1E3A5F] text-sm rounded-full">Penn Treebank</span>
+<span class="px-3 py-1 bg-[#E8913A]/10 text-[#1E3A5F] text-sm rounded-full">N-gram Models</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-xl shrink-0">4</div>
+<div class="flex-1 bg-[#1E3A5F]/5 p-4 rounded-lg">
+<div class="flex items-baseline gap-3 mb-2">
+<h3 class="text-xl font-bold text-[#1E3A5F]">Deep Learning Era</h3>
+<span class="text-base text-[#4A90A4] font-semibold">2013-Present</span>
+</div>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-2">Neural networks revolutionized NLP. <strong>Transformer architectures</strong> (2017) enabled parallel processing and attention mechanisms. Large Language Models (LLMs) like GPT and BERT achieve remarkable performance.</p>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">Transformers</span>
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">BERT &amp; GPT</span>
+<span class="px-3 py-1 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm rounded-full">LLMs</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 6: Key Milestones -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-5">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Timeline</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Key Milestones in NLP History</h2>
+</div>
+<div class="relative">
+<div class="absolute left-[19px] top-0 bottom-0 w-1 bg-gradient-to-b from-[#1E3A5F] via-[#4A90A4] to-[#E8913A]"></div>
+<div class="space-y-3">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">1950</div>
+<div class="flex-1 bg-[#1E3A5F]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">The Turing Test</h3>
+<p class="text-base text-[#2C3E50] leading-snug">Alan Turing publishes "Computing Machinery and Intelligence" proposing the famous <strong>Turing Test</strong> to determine if a machine can demonstrate human-like intelligence.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">1954</div>
+<div class="flex-1 bg-[#1E3A5F]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">Georgetown-IBM Experiment</h3>
+<p class="text-base text-[#2C3E50] leading-snug">First major machine translation demonstration: <strong>60 Russian sentences translated into English</strong> using rule-based algorithms, sparking interest in computational linguistics.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#4A90A4] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">1966</div>
+<div class="flex-1 bg-[#4A90A4]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">ELIZA Chatbot</h3>
+<p class="text-base text-[#2C3E50] leading-snug">Joseph Weizenbaum creates <strong>ELIZA</strong>, one of the first chatbots simulating a psychotherapist using simple pattern matching, demonstrating early natural language interaction.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#4A90A4] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">1997</div>
+<div class="flex-1 bg-[#4A90A4]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">LSTM Networks</h3>
+<p class="text-base text-[#2C3E50] leading-snug">Long Short-Term Memory (LSTM) networks introduced, solving the vanishing gradient problem and enabling better processing of long sequences in language tasks.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">2017</div>
+<div class="flex-1 bg-[#E8913A]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">Transformer Architecture</h3>
+<p class="text-base text-[#2C3E50] leading-snug">Google's "Attention Is All You Need" paper introduces the <strong>Transformer</strong> architecture with self-attention mechanism, revolutionizing how models process language.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-base shrink-0 relative z-10">2020</div>
+<div class="flex-1 bg-[#E8913A]/5 p-3 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-1">GPT-3 Release</h3>
+<p class="text-base text-[#2C3E50] leading-snug">OpenAI releases <strong>GPT-3 with 175 billion parameters</strong>, demonstrating unprecedented language generation capabilities and few-shot learning abilities.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 7: Major Challenges -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Fundamental Issues</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Major Challenges in NLP</h2>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-2">
+<i class="fas fa-puzzle-piece text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Language Ambiguity</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-2">Human language is inherently ambiguous. Same words can have multiple meanings depending on context.</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Example:</strong> "I saw her duck" could mean observing her pet or watching her lower her head.</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-2">
+<i class="fas fa-database text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Training Data Quality</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-2">NLP models require large, diverse, high-quality annotated datasets that are expensive and time-consuming to create.</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Challenge:</strong> Biased or unrepresentative data leads to biased models and unfair outcomes.</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-2">
+<i class="fas fa-spell-check text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Errors &amp; Variations</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-2">Real-world text contains misspellings, grammatical errors, slang, abbreviations, and informal language.</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Example:</strong> "luv this movi sooo much" - humans understand, but machines struggle.</p>
+</div>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-2">
+<i class="fas fa-globe text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Multilingualism</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-2">Over <strong>7,000 languages</strong> worldwide with different scripts, grammars, and cultural contexts. Most NLP resources focus on English.</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Gap:</strong> Low-resource languages lack training data and tools.</p>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A] col-span-2">
+<div class="flex items-start gap-3">
+<i class="fas fa-exclamation-triangle text-[#E8913A] text-2xl mt-1"></i>
+<div>
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Additional Challenges</h3>
+<div class="grid grid-cols-3 gap-2 text-sm text-[#2C3E50]">
+<div><strong>Context Understanding:</strong> Maintaining meaning across long documents</div>
+<div><strong>Bias &amp; Fairness:</strong> Gender, racial, and cultural biases in models</div>
+<div><strong>Real-time Processing:</strong> Low latency requirements for chatbots</div>
+<div><strong>Domain Adaptation:</strong> Medical, legal, technical language variations</div>
+<div><strong>Evaluation:</strong> Measuring true language understanding vs. pattern matching</div>
+<div><strong>Explainability:</strong> Understanding why models make decisions</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 8: Ambiguity Problem -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-6">
+<p class="text-[#E8913A] text-base font-semibold tracking-wider mb-2">THE CORE CHALLENGE</p>
+<h2 class="text-4xl font-bold text-[#1E3A5F]">The Ambiguity Problem</h2>
+<p class="text-lg text-[#2C3E50]/70 mt-2">Why language understanding is fundamentally difficult</p>
+</div>
+<div class="grid grid-cols-3 gap-5 mb-5">
+<div class="bg-gradient-to-br from-[#1E3A5F] to-[#4A90A4] p-5 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+<i class="fas fa-book text-white text-xl"></i>
+</div>
+<h3 class="text-xl font-bold">Lexical Ambiguity</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-3">Words with multiple meanings (polysemy) create uncertainty in interpretation.</p>
+<div class="bg-white/10 p-3 rounded">
+<p class="text-sm mb-1"><strong>"Bank"</strong> can mean:</p>
+<ul class="text-sm space-y-1 ml-4">
+<li>• Financial institution</li>
+<li>• River edge</li>
+<li>• To tilt (aircraft)</li>
+</ul>
+</div>
+</div>
+<div class="bg-gradient-to-br from-[#4A90A4] to-[#1E3A5F] p-5 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+<i class="fas fa-project-diagram text-white text-xl"></i>
+</div>
+<h3 class="text-xl font-bold">Syntactic Ambiguity</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-3">Sentence structure allows multiple grammatical interpretations.</p>
+<div class="bg-white/10 p-3 rounded">
+<p class="text-sm mb-1"><strong>"Flying planes can be dangerous"</strong></p>
+<ul class="text-sm space-y-1 ml-4">
+<li>• Planes that are flying are dangerous</li>
+<li>• The act of flying planes is dangerous</li>
+</ul>
+</div>
+</div>
+<div class="bg-gradient-to-br from-[#E8913A] to-[#1E3A5F] p-5 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+<i class="fas fa-brain text-white text-xl"></i>
+</div>
+<h3 class="text-xl font-bold">Semantic Ambiguity</h3>
+</div>
+<p class="text-base text-white/90 leading-relaxed mb-3">Meaning depends on context, world knowledge, and intent.</p>
+<div class="bg-white/10 p-3 rounded">
+<p class="text-sm mb-1"><strong>"The chicken is ready to eat"</strong></p>
+<ul class="text-sm space-y-1 ml-4">
+<li>• The chicken (food) is cooked</li>
+<li>• The chicken (animal) is hungry</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-5 rounded-lg border-l-4 border-[#E8913A]">
+<div class="flex items-start gap-4">
+<i class="fas fa-lightbulb text-[#E8913A] text-3xl mt-1"></i>
+<div class="flex-1">
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-2">Why This Matters</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed">Ambiguity is the fundamental reason NLP is difficult. Humans resolve ambiguity effortlessly using <strong>context, world knowledge, and reasoning</strong>, but machines struggle. Current language models are statistical pattern matchers—they don't truly "understand" language the way humans do. As Emily Bender notes: <em>"Language models are not understanding language—they are matching statistical patterns."</em></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 9: Chapter 2 -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="chapter">
+<img alt="Regex Chapter" class="absolute inset-0 w-full h-full object-cover" src="./regex_chapter.png"/>
+<div class="absolute inset-0 bg-gradient-to-b from-[#4A90A4]/90 via-[#4A90A4]/80 to-[#1E3A5F]/95"></div>
+<div class="relative h-full flex flex-col justify-center items-center text-center z-10">
+<div class="text-[#E8913A] text-xl font-bold tracking-[0.3em] mb-6 uppercase">Chapter 02</div>
+<h1 class="text-[80px] font-bold text-[#F8F9FA] leading-[1.1] mb-6">Pattern Matching</h1>
+<p class="text-[32px] text-[#F8F9FA]/90 font-light">Regular Expressions in NLP</p>
+<div class="mt-12 w-32 h-1 bg-[#E8913A]"></div>
+</div>
+</div>
+<!-- Slide 10: Introduction to Regex -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-5">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Foundation</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Introduction to Regular Expressions</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">What are Regular Expressions?</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3"><strong>Regular Expressions (regex or regexp)</strong> are a powerful sequence of characters that forms a search pattern. They provide a concise and flexible means for <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>matching strings of text</strong></span>, such as particular characters, words, or patterns of characters.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">Think of regex as a <strong>"Google for text"</strong>—it allows you to search, match, and manipulate text based on specific patterns rather than exact strings.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Why Regex Matters in NLP</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3">
+<i class="fas fa-check-circle text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Text Cleaning</p>
+<p class="text-sm text-white/80">Remove HTML tags, special characters, noise</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-check-circle text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Information Extraction</p>
+<p class="text-sm text-white/80">Extract emails, phone numbers, dates, URLs</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-check-circle text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Tokenization</p>
+<p class="text-sm text-white/80">Define word boundaries and split criteria</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-check-circle text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Validation</p>
+<p class="text-sm text-white/80">Verify text formats and structures</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Basic Regex Example</h3>
+<div class="bg-[#1E3A5F] p-3 rounded mb-3">
+<p class="text-[#E8913A] font-mono text-base mb-1">Pattern: \d{3}-\d{3}-\d{4}</p>
+<p class="text-white/90 text-sm">Matches: 123-456-7890</p>
+</div>
+<p class="text-base text-[#2C3E50]">This pattern matches US phone numbers with dashes.</p>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Common Use Cases</h3>
+<div class="space-y-2 text-base text-[#2C3E50]">
+<p><strong>• Email Validation:</strong> Verify email format correctness</p>
+<p><strong>• Data Parsing:</strong> Extract structured data from unstructured text</p>
+<p><strong>• Search &amp; Replace:</strong> Bulk text transformations</p>
+<p><strong>• Log Analysis:</strong> Parse server logs and error messages</p>
+<p><strong>• Web Scraping:</strong> Extract specific content from HTML</p>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><strong>Key Insight:</strong> Regex is essential for preprocessing raw text before applying more sophisticated NLP techniques.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 11: Regex Building Blocks -->
+<div class="ppt-slide !bg-[#FFFFFF] flex flex-col" type="content">
+<div class="mb-2 shrink-0">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-1 uppercase">Syntax</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Regex Building Blocks</h2>
+</div>
+<div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+<div class="space-y-2 flex flex-col h-full">
+<div class="bg-[#1E3A5F] p-3 rounded-lg text-white flex-1 flex flex-col">
+<h3 class="text-lg font-bold mb-2 shrink-0">Character Classes</h3>
+<div class="space-y-1 text-base flex-1">
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">\d</code>
+<span>Any digit (0-9)</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">\w</code>
+<span>Word character (a-z, A-Z, 0-9, _)</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">\s</code>
+<span>Whitespace (space, tab, newline)</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">.</code>
+<span>Any character except newline</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">[abc]</code>
+<span>Any character in brackets</span>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-3 rounded-lg text-white flex-1 flex flex-col">
+<h3 class="text-lg font-bold mb-2 shrink-0">Anchors</h3>
+<div class="space-y-1 text-base flex-1">
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">^</code>
+<span>Start of string</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">$</code>
+<span>End of string</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">\b</code>
+<span>Word boundary</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-2 flex flex-col h-full">
+<div class="bg-[#E8913A] p-3 rounded-lg text-white flex-1 flex flex-col">
+<h3 class="text-lg font-bold mb-2 shrink-0">Quantifiers</h3>
+<div class="space-y-1 text-base flex-1">
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono">*</code>
+<span>0 or more</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono">+</code>
+<span>1 or more</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono">?</code>
+<span>0 or 1 (optional)</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono">{n}</code>
+<span>Exactly n times</span>
+</div>
+<div class="flex justify-between items-center bg-white/10 p-1.5 rounded">
+<code class="font-mono">{n,m}</code>
+<span>Between n and m times</span>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/10 p-3 rounded-lg border-l-4 border-[#1E3A5F] flex-1 flex flex-col">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2 shrink-0">Special Characters</h3>
+<div class="space-y-1 text-base text-[#2C3E50] flex-1">
+<div class="flex justify-between items-center bg-white p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">|</code>
+<span>OR operator</span>
+</div>
+<div class="flex justify-between items-center bg-white p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">()</code>
+<span>Grouping</span>
+</div>
+<div class="flex justify-between items-center bg-white p-1.5 rounded">
+<code class="font-mono text-[#E8913A]">\</code>
+<span>Escape character</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-2 bg-[#E8913A]/10 p-2 rounded-lg border-l-4 border-[#E8913A] shrink-0">
+<p class="text-base text-[#2C3E50]">
+<strong>Pro Tip:</strong>
+                    Combine these building blocks to create powerful patterns. Example:
+                    <code class="bg-[#1E3A5F] text-white px-2 py-1 rounded">\b[A-Z][a-z]+\b</code>
+                    matches capitalized words.
+                </p>
+</div>
+</div>
+<!-- Slide 12: Regex in Action -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-5">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Practical Applications</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Regex in Action: Practical Examples</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg border-l-4 border-[#1E3A5F]">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-xl shrink-0">1</div>
+<div class="flex-1">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Email Address Extraction</h3>
+<div class="bg-[#1E3A5F] p-3 rounded mb-2">
+<p class="text-[#E8913A] font-mono text-base mb-1">Pattern: [\w\.-]+@[\w\.-]+\.\w+</p>
+</div>
+<p class="text-base text-[#2C3E50] mb-1"><strong>Matches:</strong> john.doe@email.com, user_name@company.co.uk</p>
+<p class="text-sm text-[#2C3E50]/70">Breakdown: word chars + @ + word chars + . + word chars</p>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4]/5 p-4 rounded-lg border-l-4 border-[#4A90A4]">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-[#4A90A4] flex items-center justify-center text-white font-bold text-xl shrink-0">2</div>
+<div class="flex-1">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Phone Number Validation (US)</h3>
+<div class="bg-[#4A90A4] p-3 rounded mb-2">
+<p class="text-white font-mono text-base mb-1">Pattern: ^(\+1|1)?\s*\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$</p>
+</div>
+<p class="text-base text-[#2C3E50] mb-1"><strong>Matches:</strong> 123-456-7890, (123) 456-7890, +1 123.456.7890</p>
+<p class="text-sm text-[#2C3E50]/70">Handles optional country code, various separators</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-[#E8913A]/5 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-lg shrink-0">3</div>
+<div class="flex-1">
+<h3 class="text-base font-bold text-[#1E3A5F] mb-2">Remove HTML Tags</h3>
+<div class="bg-[#E8913A] p-2 rounded mb-2">
+<p class="text-white font-mono text-sm">Pattern: &lt;[^&gt;]+&gt;</p>
+</div>
+<p class="text-sm text-[#2C3E50]"><strong>Input:</strong> &lt;p&gt;Hello&lt;/p&gt;</p>
+<p class="text-sm text-[#2C3E50]"><strong>Output:</strong> Hello</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg border-l-4 border-[#1E3A5F]">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-lg shrink-0">4</div>
+<div class="flex-1">
+<h3 class="text-base font-bold text-[#1E3A5F] mb-2">Extract URLs</h3>
+<div class="bg-[#1E3A5F] p-2 rounded mb-2">
+<p class="text-[#E8913A] font-mono text-sm">Pattern: https?://[^\s]+</p>
+</div>
+<p class="text-sm text-[#2C3E50]"><strong>Matches:</strong> http://example.com, https://site.org/path</p>
+<p class="text-sm text-[#2C3E50]/70">Finds web addresses in text</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-3 rounded-lg text-white">
+<p class="text-base"><i class="fas fa-lightbulb text-[#E8913A] mr-2"></i><strong>Best Practice:</strong> Always test regex patterns with diverse examples including edge cases before deployment.</p>
+</div>
+</div>
+</div>
+<!-- Slide 13: Python Regex -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Implementation</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Python Regex for NLP</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-3">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Python's <code>re</code> Module</h3>
+<p class="text-base text-white/90 mb-3">Python provides built-in support for regular expressions through the <code>re</code> module.</p>
+<div class="bg-white/10 p-3 rounded">
+<p class="text-[#E8913A] font-mono text-base">import re</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Key Functions</h3>
+<div class="space-y-2">
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-mono text-base text-[#E8913A] mb-1">re.match(pattern, string)</p>
+<p class="text-sm text-[#2C3E50]">Matches pattern <strong>only at the start</strong> of string</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#4A90A4]">
+<p class="font-mono text-base text-[#E8913A] mb-1">re.search(pattern, string)</p>
+<p class="text-sm text-[#2C3E50]">Searches entire string for <strong>first match</strong></p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#E8913A]">
+<p class="font-mono text-base text-[#E8913A] mb-1">re.findall(pattern, string)</p>
+<p class="text-sm text-[#2C3E50]">Returns <strong>all matches</strong> as a list</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-mono text-base text-[#E8913A] mb-1">re.sub(pattern, repl, string)</p>
+<p class="text-sm text-[#2C3E50]"><strong>Replaces</strong> matches with replacement text</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Complete Example</h3>
+<div class="code-block text-sm">
+<p>import re</p>
+<p></p>
+<p>text = "Contact us at support@example.com"</p>
+<p>pattern = r'[\w\.-]+@[\w\.-]+\.\w+'</p>
+<p></p>
+<p># Find all email addresses</p>
+<p>emails = re.findall(pattern, text)</p>
+<p>print(emails)</p>
+<p># Output: ['support@example.com']</p>
+<p></p>
+<p># Replace emails with [EMAIL]</p>
+<p>masked = re.sub(pattern, '[EMAIL]', text)</p>
+<p>print(masked)</p>
+<p># Output: "Contact us at [EMAIL]"</p>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-base font-bold text-[#1E3A5F] mb-2">Pro Tips</h3>
+<ul class="space-y-1 text-sm text-[#2C3E50]">
+<li>• Use <strong>raw strings</strong> (r'pattern') to avoid escape character issues</li>
+<li>• <strong>Compile</strong> patterns for reuse: <code>pattern = re.compile(r'...')</code></li>
+<li>• Use <strong>verbose mode</strong> (re.VERBOSE) for complex patterns</li>
+<li>• Always handle <strong>None</strong> returns from match/search</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 14: Chapter 3 -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="chapter">
+<img alt="Normalization Chapter" class="absolute inset-0 w-full h-full object-cover" src="./normalization_chapter.png"/>
+<div class="absolute inset-0 bg-gradient-to-b from-[#4A90A4]/90 via-[#1E3A5F]/80 to-[#1E3A5F]/95"></div>
+<div class="relative h-full flex flex-col justify-center items-center text-center z-10">
+<div class="text-[#E8913A] text-xl font-bold tracking-[0.3em] mb-6 uppercase">Chapter 03</div>
+<h1 class="text-[80px] font-bold text-[#F8F9FA] leading-[1.1] mb-6">Text Preparation</h1>
+<p class="text-[32px] text-[#F8F9FA]/90 font-light">Words, Corpora, and Normalization</p>
+<div class="mt-12 w-32 h-1 bg-[#E8913A]"></div>
+</div>
+</div>
+<!-- Slide 15: Understanding Corpora -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Foundation</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Understanding Corpora</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">What is a Corpus?</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3">A <strong>corpus</strong> (plural: <em>corpora</em>) is a <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>large and structured collection of texts</strong></span> used for linguistic analysis, research, and training NLP models. Corpora serve as the foundation for statistical analysis and machine learning in NLP.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">Think of a corpus as a <strong>dataset for language</strong>—it provides the raw material from which models learn patterns, grammar, vocabulary, and semantics.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Why Corpora Matter</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3">
+<i class="fas fa-graduation-cap text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Training Data</p>
+<p class="text-sm text-white/80">ML models learn from corpus examples</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-chart-line text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Statistical Analysis</p>
+<p class="text-sm text-white/80">Word frequencies, co-occurrences, patterns</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<i class="fas fa-flask text-[#E8913A] text-lg mt-1"></i>
+<div>
+<p class="font-semibold text-base">Benchmarking</p>
+<p class="text-sm text-white/80">Standard datasets for model evaluation</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Types of Corpora</h3>
+<div class="space-y-2">
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">Annotated vs. Unannotated</p>
+<p class="text-sm text-[#2C3E50]"><strong>Annotated:</strong> Tagged with POS, parses, entities<br/><strong>Unannotated:</strong> Raw text only</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#4A90A4]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">Monolingual vs. Multilingual</p>
+<p class="text-sm text-[#2C3E50]"><strong>Monolingual:</strong> Single language<br/><strong>Multilingual:</strong> Parallel texts in multiple languages</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#E8913A]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">Domain-Specific</p>
+<p class="text-sm text-[#2C3E50]">Medical, legal, financial, scientific, literary</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">Temporal</p>
+<p class="text-sm text-[#2C3E50]">Historical corpora showing language evolution</p>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-3 rounded-lg border-l-4 border-[#E8913A]">
+<p class="text-base text-[#2C3E50]"><strong>Key Principle:</strong> "Garbage in, garbage out"—corpus quality directly impacts model performance.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 16: Popular NLP Corpora -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Resources</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Popular NLP Corpora</h2>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-book text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Brown Corpus</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">First million-word electronic corpus of English</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Size:</strong> 1M words</p>
+<p class="text-xs"><strong>Genre:</strong> 500 texts, 15 categories</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> POS tagging, genre analysis</p>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-tree text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Penn Treebank</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Parsed corpus with syntactic annotations</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Size:</strong> 4.5M words (WSJ)</p>
+<p class="text-xs"><strong>Annotation:</strong> POS + parse trees</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> Parsing, POS tagging benchmark</p>
+</div>
+<div class="bg-[#E8913A] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-network-wired text-white text-2xl"></i>
+<h3 class="text-lg font-bold">WordNet</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Lexical database of English words</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Content:</strong> Synsets, relations, definitions</p>
+<p class="text-xs"><strong>Relations:</strong> Synonymy, hypernymy, hyponymy</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> Lemmatization, WSD, similarity</p>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-book-open text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Gutenberg</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Literary texts from Project Gutenberg</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Size:</strong> 25,000+ books</p>
+<p class="text-xs"><strong>Content:</strong> Classic literature</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> Language modeling, style analysis</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-globe text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Wikipedia</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Encyclopedia articles dump</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Size:</strong> Billions of words</p>
+<p class="text-xs"><strong>Languages:</strong> 300+ languages</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> Pretraining LLMs, knowledge extraction</p>
+</div>
+<div class="bg-[#E8913A] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-spider text-white text-2xl"></i>
+<h3 class="text-lg font-bold">Common Crawl</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Web crawl data from billions of pages</p>
+<div class="bg-white/10 p-2 rounded mb-2">
+<p class="text-xs"><strong>Size:</strong> Petabytes of data</p>
+<p class="text-xs"><strong>Content:</strong> Web pages, diverse topics</p>
+</div>
+<p class="text-xs text-white/80"><strong>Use:</strong> Large-scale language modeling</p>
+</div>
+</div>
+<div class="mt-3 bg-[#1E3A5F]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><i class="fas fa-info-circle text-[#E8913A] mr-2"></i><strong>Access:</strong> Most corpora available via NLTK, spaCy, Hugging Face Datasets, or official websites.</p>
+</div>
+</div>
+<!-- Slide 17: Text Normalization Pipeline -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Workflow</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">The Text Normalization Pipeline</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<p class="text-base text-[#2C3E50] leading-relaxed mb-4"><strong>Text normalization</strong> transforms raw, messy text into a clean, structured format suitable for NLP analysis. The pipeline varies based on the task, but follows a general sequence:</p>
+<div class="flex items-center justify-between gap-2">
+<div class="flex-1 bg-[#1E3A5F] p-3 rounded-lg text-white text-center">
+<i class="fas fa-file-alt text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-base">Raw Text</p>
+<p class="text-xs text-white/80 mt-1">Unprocessed input</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#4A90A4] p-3 rounded-lg text-white text-center">
+<i class="fas fa-broom text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-base">Cleaning</p>
+<p class="text-xs text-white/80 mt-1">Regex, HTML removal</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#E8913A] p-3 rounded-lg text-white text-center">
+<i class="fas fa-text-height text-white text-2xl mb-2"></i>
+<p class="font-semibold text-base">Normalization</p>
+<p class="text-xs text-white/80 mt-1">Lowercase, punctuation</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#1E3A5F] p-3 rounded-lg text-white text-center">
+<i class="fas fa-cut text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-base">Tokenization</p>
+<p class="text-xs text-white/80 mt-1">Split into tokens</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#4A90A4] p-3 rounded-lg text-white text-center">
+<i class="fas fa-filter text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-base">Stopword Removal</p>
+<p class="text-xs text-white/80 mt-1">Remove common words</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#E8913A] p-3 rounded-lg text-white text-center">
+<i class="fas fa-compress-alt text-white text-2xl mb-2"></i>
+<p class="font-semibold text-base">Stem/Lemmatize</p>
+<p class="text-xs text-white/80 mt-1">Reduce to root form</p>
+</div>
+<i class="fas fa-arrow-right text-[#E8913A] text-xl"></i>
+<div class="flex-1 bg-[#1E3A5F] p-3 rounded-lg text-white text-center">
+<i class="fas fa-check-circle text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-base">Clean Tokens</p>
+<p class="text-xs text-white/80 mt-1">Analysis-ready</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Normalization Steps</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-sm shrink-0">1</div>
+<div>
+<p class="font-semibold text-base">Lowercasing</p>
+<p class="text-sm text-white/80">"Hello" → "hello" for consistency</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+<div>
+<p class="font-semibold text-base">Punctuation Removal</p>
+<p class="text-sm text-white/80">Remove or replace special chars</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-sm shrink-0">3</div>
+<div>
+<p class="font-semibold text-base">Number Handling</p>
+<p class="text-sm text-white/80">Remove or normalize digits</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-sm shrink-0">4</div>
+<div>
+<p class="font-semibold text-base">Whitespace Cleanup</p>
+<p class="text-sm text-white/80">Remove extra spaces, newlines</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Task-Dependent Pipeline</h3>
+<p class="text-base text-[#2C3E50] mb-2">Not all steps are needed for every task:</p>
+<div class="space-y-1 text-sm text-[#2C3E50]">
+<p><strong>• Sentiment Analysis:</strong> Keep punctuation (!, ?), don't remove stopwords</p>
+<p><strong>• Information Retrieval:</strong> Aggressive normalization, stemming</p>
+<p><strong>• Machine Translation:</strong> Minimal preprocessing, keep full text</p>
+<p><strong>• Named Entity Recognition:</strong> Preserve capitalization</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/10 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><i class="fas fa-exclamation-triangle text-[#E8913A] mr-2"></i><strong>Important:</strong> Modern LLMs (GPT, BERT) often require minimal preprocessing—they learn patterns directly from raw text.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 18: Tokenization -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Step 1</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Tokenization: Breaking Text into Units</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">What is Tokenization?</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3"><strong>Tokenization</strong> is the process of <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>breaking down text into smaller units called tokens</strong></span>. These tokens can be words, sentences, characters, or subwords.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">Tokenization is the <strong>foundation of NLP</strong>—before any analysis, text must be split into manageable pieces that algorithms can process.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Types of Tokenization</h3>
+<div class="space-y-2">
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1"><i class="fas fa-word text-[#E8913A] mr-2"></i>Word Tokenization</p>
+<p class="text-sm text-white/80">Split by word boundaries</p>
+<p class="text-sm text-[#E8913A] mt-1">"Hello world" → ["Hello", "world"]</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1"><i class="fas fa-align-left text-[#E8913A] mr-2"></i>Sentence Tokenization</p>
+<p class="text-sm text-white/80">Split by sentence boundaries</p>
+<p class="text-sm text-[#E8913A] mt-1">"Hello. World!" → ["Hello.", "World!"]</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1"><i class="fas fa-text text-[#E8913A] mr-2"></i>Character Tokenization</p>
+<p class="text-sm text-white/80">Split into individual characters</p>
+<p class="text-sm text-[#E8913A] mt-1">"Hello" → ["H", "e", "l", "l", "o"]</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Modern Approaches: Subword Tokenization</h3>
+<p class="text-base text-[#2C3E50] mb-3">Deep learning models use <strong>subword tokenization</strong> to handle out-of-vocabulary words:</p>
+<div class="space-y-2">
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">Byte-Pair Encoding (BPE)</p>
+<p class="text-sm text-[#2C3E50]">Iteratively merge most frequent character pairs. Used in GPT, BERT.</p>
+<p class="text-sm text-[#E8913A] mt-1">"unhappiness" → ["un", "happiness"]</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#4A90A4]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">WordPiece</p>
+<p class="text-sm text-[#2C3E50]">Google's variant maximizing language model likelihood. Used in BERT.</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#E8913A]">
+<p class="font-semibold text-[#1E3A5F] text-base mb-1">SentencePiece</p>
+<p class="text-sm text-[#2C3E50]">Language-agnostic, works without pre-tokenization. Used in T5, XLNet.</p>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-3 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-base font-bold text-[#1E3A5F] mb-2">Challenges</h3>
+<ul class="space-y-1 text-sm text-[#2C3E50]">
+<li>• <strong>Contractions:</strong> "don't" → ["do", "n't"] or ["don't"]?</li>
+<li>• <strong>Punctuation:</strong> "end." → ["end", "."] or ["end."]?</li>
+<li>• <strong>URLs/Emails:</strong> Keep as one token or split?</li>
+<li>• <strong>Language-specific:</strong> Chinese has no spaces between words</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 19: Stemming -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Step 2</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Stemming: Reducing Words to Roots</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">What is Stemming?</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3"><strong>Stemming</strong> is a <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>rule-based process that reduces words to their root form (stem)</strong></span> by removing prefixes and suffixes. The resulting stem may not be a valid dictionary word.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">Stemming operates like a <strong>"linguistic chainsaw"</strong>—it chops off word endings based on heuristic rules without considering context or grammar.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Porter Stemmer: 5 Steps</h3>
+<p class="text-sm text-white/90 mb-3">The most popular stemming algorithm (Martin Porter, 1980)</p>
+<div class="space-y-1">
+<div class="bg-white/10 p-2 rounded">
+<p class="font-semibold text-base">Step 1: Plurals &amp; Participles</p>
+<p class="text-sm text-[#E8913A]">caresses → caress, running → run</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="font-semibold text-base">Step 2: Suffixes (-ational, -ness)</p>
+<p class="text-sm text-[#E8913A]">rational → ration, emotional → emote</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="font-semibold text-base">Step 3: Complex Suffixes</p>
+<p class="text-sm text-[#E8913A]">happiness → happy, joyful → joy</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="font-semibold text-base">Step 4: Final Suffixes (-al, -ance)</p>
+<p class="text-sm text-[#E8913A]">adoption → adopt, allowance → allow</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="font-semibold text-base">Step 5: Cleanup (-e, double letters)</p>
+<p class="text-sm text-[#E8913A]">probate → probat, controll → control</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Stemming Examples</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-[#1E3A5F] text-white">
+<th class="p-2 text-left rounded-tl-lg">Original</th>
+<th class="p-2 text-left rounded-tr-lg">Stem</th>
+</tr>
+</thead>
+<tbody class="bg-white">
+<tr class="border-b">
+<td class="p-2">running</td>
+<td class="p-2 text-[#E8913A] font-semibold">run</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">studies</td>
+<td class="p-2 text-[#E8913A] font-semibold">studi</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">happily</td>
+<td class="p-2 text-[#E8913A] font-semibold">happili</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">communication</td>
+<td class="p-2 text-[#E8913A] font-semibold">commun</td>
+</tr>
+<tr>
+<td class="p-2">jumps</td>
+<td class="p-2 text-[#E8913A] font-semibold">jump</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Pros &amp; Cons</h3>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<p class="font-semibold text-[#1E3A5F] mb-1"><i class="fas fa-plus-circle text-green-600 mr-1"></i>Advantages</p>
+<ul class="text-sm text-[#2C3E50] space-y-1">
+<li>• Fast and simple</li>
+<li>• Reduces vocabulary size</li>
+<li>• Good for information retrieval</li>
+<li>• No dictionary needed</li>
+</ul>
+</div>
+<div>
+<p class="font-semibold text-[#1E3A5F] mb-1"><i class="fas fa-minus-circle text-red-600 mr-1"></i>Disadvantages</p>
+<ul class="text-sm text-[#2C3E50] space-y-1">
+<li>• Produces non-words</li>
+<li>• Over-stemming errors</li>
+<li>• No context awareness</li>
+<li>• Language-specific rules</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><strong>Best For:</strong> Search engines, information retrieval, document clustering where speed matters more than linguistic accuracy.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 20: Lemmatization -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Step 3</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Lemmatization: Dictionary-Based Reduction</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">What is Lemmatization?</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3"><strong>Lemmatization</strong> is the process of <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>reducing words to their base or dictionary form (lemma)</strong></span> using vocabulary and morphological analysis. Unlike stemming, the result is always a valid word.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">Lemmatization acts like a <strong>"linguistic scalpel"</strong>—it carefully considers context and grammar to return meaningful base forms.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">WordNet Lemmatizer</h3>
+<p class="text-sm text-white/90 mb-3">The most popular lemmatization tool, based on the WordNet lexical database:</p>
+<div class="space-y-2">
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Groups words by:</p>
+<ul class="text-sm space-y-1 ml-4">
+<li>• <strong>Synonymy:</strong> Similar meaning (like a thesaurus)</li>
+<li>• <strong>Semantics:</strong> Word senses in context</li>
+<li>• <strong>Hierarchy:</strong> Hypernyms (general) &amp; hyponyms (specific)</li>
+</ul>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Requires POS Tag:</p>
+<p class="text-sm">• Noun (n): dogs → dog</p>
+<p class="text-sm">• Verb (v): running → run</p>
+<p class="text-sm">• Adjective (a): better → good</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Lemmatization Examples</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-[#4A90A4] text-white">
+<th class="p-2 text-left rounded-tl-lg">Original</th>
+<th class="p-2 text-left">POS</th>
+<th class="p-2 text-left rounded-tr-lg">Lemma</th>
+</tr>
+</thead>
+<tbody class="bg-white">
+<tr class="border-b">
+<td class="p-2">studies</td>
+<td class="p-2"><span class="px-2 py-1 bg-[#4A90A4]/20 rounded text-xs">verb</span></td>
+<td class="p-2 text-[#E8913A] font-semibold">study</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">better</td>
+<td class="p-2"><span class="px-2 py-1 bg-[#4A90A4]/20 rounded text-xs">adj</span></td>
+<td class="p-2 text-[#E8913A] font-semibold">good</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">mice</td>
+<td class="p-2"><span class="px-2 py-1 bg-[#4A90A4]/20 rounded text-xs">noun</span></td>
+<td class="p-2 text-[#E8913A] font-semibold">mouse</td>
+</tr>
+<tr class="border-b">
+<td class="p-2">went</td>
+<td class="p-2"><span class="px-2 py-1 bg-[#4A90A4]/20 rounded text-xs">verb</span></td>
+<td class="p-2 text-[#E8913A] font-semibold">go</td>
+</tr>
+<tr>
+<td class="p-2">communication</td>
+<td class="p-2"><span class="px-2 py-1 bg-[#4A90A4]/20 rounded text-xs">noun</span></td>
+<td class="p-2 text-[#E8913A] font-semibold">communication</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Pros &amp; Cons</h3>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<p class="font-semibold text-[#1E3A5F] mb-1"><i class="fas fa-plus-circle text-green-600 mr-1"></i>Advantages</p>
+<ul class="text-sm text-[#2C3E50] space-y-1">
+<li>• Produces valid words</li>
+<li>• Context-aware</li>
+<li>• Better for semantic tasks</li>
+<li>• Handles irregular forms</li>
+</ul>
+</div>
+<div>
+<p class="font-semibold text-[#1E3A5F] mb-1"><i class="fas fa-minus-circle text-red-600 mr-1"></i>Disadvantages</p>
+<ul class="text-sm text-[#2C3E50] space-y-1">
+<li>• Slower than stemming</li>
+<li>• Requires POS tags</li>
+<li>• Needs dictionary</li>
+<li>• Language-dependent</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><strong>Best For:</strong> Chatbots, machine translation, sentiment analysis, and any task requiring linguistic accuracy.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 21: Stemming vs Lemmatization -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Comparison</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Stemming vs Lemmatization: When to Use Each</h2>
+</div>
+<div class="space-y-3">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-cut text-[#E8913A] text-2xl"></i>
+<h3 class="text-xl font-bold">Stemming</h3>
+</div>
+<div class="space-y-2">
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Approach</p>
+<p class="text-sm">Rule-based suffix removal</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Output</p>
+<p class="text-sm">May produce non-words (studi, happili)</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Speed</p>
+<p class="text-sm">Fast, O(n) per word</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Context</p>
+<p class="text-sm">No context awareness</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Best For</p>
+<p class="text-sm">IR systems, search engines, clustering</p>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-book text-[#E8913A] text-2xl"></i>
+<h3 class="text-xl font-bold">Lemmatization</h3>
+</div>
+<div class="space-y-2">
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Approach</p>
+<p class="text-sm">Dictionary-based morphological analysis</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Output</p>
+<p class="text-sm">Always valid dictionary words</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Speed</p>
+<p class="text-sm">Slower, requires lookup</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Context</p>
+<p class="text-sm">POS-aware, context-sensitive</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Best For</p>
+<p class="text-sm">Semantic tasks, chatbots, translation</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Decision Framework</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-white p-3 rounded">
+<p class="font-semibold text-[#1E3A5F] mb-2"><i class="fas fa-search text-[#E8913A] mr-2"></i>Information Retrieval</p>
+<p class="text-sm text-[#2C3E50]">Use <strong>Stemming</strong> for faster query matching in search engines</p>
+</div>
+<div class="bg-white p-3 rounded">
+<p class="font-semibold text-[#1E3A5F] mb-2"><i class="fas fa-robot text-[#E8913A] mr-2"></i>Conversational AI</p>
+<p class="text-sm text-[#2C3E50]">Use <strong>Lemmatization</strong> for accurate understanding in chatbots</p>
+</div>
+<div class="bg-white p-3 rounded">
+<p class="font-semibold text-[#1E3A5F] mb-2"><i class="fas fa-language text-[#E8913A] mr-2"></i>Deep Learning</p>
+<p class="text-sm text-[#2C3E50]">Use <strong>Neither</strong>—modern LLMs learn subword tokens directly</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><strong>Remember:</strong> If speed is critical and you can tolerate some imprecision → Stemming. If semantic accuracy matters → Lemmatization.</p>
+</div>
+</div>
+</div>
+<!-- Slide 22: NLTK Code Examples -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Implementation</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">NLTK in Action: Code Examples</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Installation &amp; Setup</h3>
+<div class="code-block text-sm">
+<p># Install NLTK</p>
+<p>pip install nltk</p>
+<p></p>
+<p>import nltk</p>
+<p># Download required data</p>
+<p>nltk.download('punkt')</p>
+<p>nltk.download('stopwords')</p>
+<p>nltk.download('wordnet')</p>
+<p>nltk.download('averaged_perceptron_tagger')</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Tokenization</h3>
+<div class="code-block text-sm">
+<p>from nltk.tokenize import word_tokenize, sent_tokenize</p>
+<p></p>
+<p>text = "Hello world! NLP is fun."</p>
+<p>words = word_tokenize(text)</p>
+<p># ['Hello', 'world', '!', 'NLP', 'is', 'fun', '.']</p>
+<p></p>
+<p>sentences = sent_tokenize(text)</p>
+<p># ['Hello world!', 'NLP is fun.']</p>
+</div>
+</div>
+<div class="bg-[#E8913A]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Stopword Removal</h3>
+<div class="code-block text-sm">
+<p>from nltk.corpus import stopwords</p>
+<p></p>
+<p>stop_words = set(stopwords.words('english'))</p>
+<p>words = ['the', 'cat', 'is', 'on', 'the', 'mat']</p>
+<p>filtered = [w for w in words if w not in stop_words]</p>
+<p># ['cat', 'mat']</p>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Stemming with Porter</h3>
+<div class="code-block text-sm">
+<p>from nltk.stem import PorterStemmer</p>
+<p></p>
+<p>stemmer = PorterStemmer()</p>
+<p>words = ['running', 'studies', 'happily']</p>
+<p>stemmed = [stemmer.stem(w) for w in words]</p>
+<p># ['run', 'studi', 'happili']</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Lemmatization with WordNet</h3>
+<div class="code-block text-sm">
+<p>from nltk.stem import WordNetLemmatizer</p>
+<p></p>
+<p>lemmatizer = WordNetLemmatizer()</p>
+<p>print(lemmatizer.lemmatize('better', pos='a'))</p>
+<p># 'good'</p>
+<p>print(lemmatizer.lemmatize('studies', pos='v'))</p>
+<p># 'study'</p>
+<p>print(lemmatizer.lemmatize('mice'))</p>
+<p># 'mouse'</p>
+</div>
+</div>
+<div class="bg-[#E8913A]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Complete Pipeline</h3>
+<div class="code-block text-sm">
+<p>def preprocess(text):</p>
+<p>    tokens = word_tokenize(text.lower())</p>
+<p>    stop_words = set(stopwords.words('english'))</p>
+<p>    tokens = [t for t in tokens if t.isalnum()]</p>
+<p>    tokens = [t for t in tokens if t not in stop_words]</p>
+<p>    lemmatizer = WordNetLemmatizer()</p>
+<p>    return [lemmatizer.lemmatize(t) for t in tokens]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 23: Chapter 4 -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="chapter">
+<img alt="Edit Distance Chapter" class="absolute inset-0 w-full h-full object-cover" src="./editdistance_chapter.png"/>
+<div class="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/90 via-[#4A90A4]/80 to-[#1E3A5F]/95"></div>
+<div class="relative h-full flex flex-col justify-center items-center text-center z-10">
+<div class="text-[#E8913A] text-xl font-bold tracking-[0.3em] mb-6 uppercase">Chapter 04</div>
+<h1 class="text-[80px] font-bold text-[#F8F9FA] leading-[1.1] mb-6">String Comparison</h1>
+<p class="text-[32px] text-[#F8F9FA]/90 font-light">Minimum Edit Distance</p>
+<div class="mt-12 w-32 h-1 bg-[#E8913A]"></div>
+</div>
+</div>
+<!-- Slide 24: What is Edit Distance? -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Introduction</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">What is Minimum Edit Distance?</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">Definition</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3">The <strong>minimum edit distance</strong> between two strings is the <span class="bg-[#E8913A]/20" style="color: #1E3A5F;"><strong>minimum number of single-character operations</strong></span> (insertions, deletions, or substitutions) required to transform one string into another.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">It measures <strong>string similarity</strong>—the smaller the edit distance, the more similar the strings are.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Levenshtein Distance</h3>
+<p class="text-sm text-white/90 mb-3">The most common type of edit distance, introduced by Vladimir Levenshtein in 1965:</p>
+<div class="space-y-2">
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">All operations cost 1</p>
+<p class="text-sm">Insertion, deletion, substitution each count as 1 operation</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Symmetric</p>
+<p class="text-sm">distance(s1, s2) = distance(s2, s1)</p>
+</div>
+<div class="bg-white/10 p-3 rounded">
+<p class="font-semibold text-base mb-1">Metric properties</p>
+<p class="text-sm">Satisfies triangle inequality</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Classic Example</h3>
+<div class="bg-white p-4 rounded-lg border-2 border-[#4A90A4]">
+<p class="text-center text-lg mb-3">Transform <strong>"kitten"</strong> → <strong>"sitting"</strong></p>
+<div class="space-y-1 text-base">
+<p>1. <strong>k</strong>itten → <strong>s</strong>itten (substitute 'k' with 's')</p>
+<p>2. sitt<strong>e</strong>n → sitt<strong>i</strong>n (substitute 'e' with 'i')</p>
+<p>3. sittin → sittin<strong>g</strong> (insert 'g' at end)</p>
+</div>
+<div class="mt-3 bg-[#E8913A]/20 p-2 rounded text-center">
+<p class="text-xl font-bold text-[#1E3A5F]">Edit Distance = 3</p>
+</div>
+</div>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Why Edit Distance Matters</h3>
+<ul class="space-y-1 text-base text-[#2C3E50]">
+<li>• <strong>Spell Checking:</strong> Find closest valid words</li>
+<li>• <strong>DNA Analysis:</strong> Sequence alignment in bioinformatics</li>
+<li>• <strong>Plagiarism Detection:</strong> Measure text similarity</li>
+<li>• <strong>Speech Recognition:</strong> Error analysis</li>
+<li>• <strong>Machine Translation:</strong> Evaluation metrics</li>
+</ul>
+</div>
+<div class="bg-[#1E3A5F]/5 p-3 rounded-lg">
+<p class="text-base text-[#2C3E50]"><strong>Key Insight:</strong> Edit distance transforms string comparison from a binary match/no-match to a continuous similarity measure.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 25: Three Operations -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Building Blocks</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">The Three Operations Explained</h2>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-4">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center">
+<i class="fas fa-plus text-white text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold">Insertion</h3>
+</div>
+<p class="text-base text-white/90 mb-3">Add a character to the string</p>
+<div class="bg-white/10 p-3 rounded mb-3">
+<p class="text-sm mb-1"><strong>Example:</strong></p>
+<p class="text-base">"cat" → "cats"</p>
+<p class="text-sm text-[#E8913A] mt-1">Insert 's' at the end</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Cost:</strong> 1 operation</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-14 h-14 rounded-full bg-[#E8913A] flex items-center justify-center">
+<i class="fas fa-minus text-white text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold">Deletion</h3>
+</div>
+<p class="text-base text-white/90 mb-3">Remove a character from the string</p>
+<div class="bg-white/10 p-3 rounded mb-3">
+<p class="text-sm mb-1"><strong>Example:</strong></p>
+<p class="text-base">"hello" → "helo"</p>
+<p class="text-sm text-[#E8913A] mt-1">Delete one 'l'</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Cost:</strong> 1 operation</p>
+</div>
+</div>
+<div class="bg-[#E8913A] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+<i class="fas fa-exchange-alt text-white text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold">Substitution</h3>
+</div>
+<p class="text-base text-white/90 mb-3">Replace one character with another</p>
+<div class="bg-white/10 p-3 rounded mb-3">
+<p class="text-sm mb-1"><strong>Example:</strong></p>
+<p class="text-base">"kitten" → "sitten"</p>
+<p class="text-sm text-white/90 mt-1">Substitute 'k' with 's'</p>
+</div>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm"><strong>Cost:</strong> 1 operation</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Multiple Paths to the Same Goal</h3>
+<p class="text-base text-[#2C3E50] mb-3">Different sequences of operations can achieve the same transformation. The edit distance is the <strong>minimum</strong> number of operations across all possible paths.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white p-3 rounded border-l-4 border-[#1E3A5F]">
+<p class="font-semibold text-[#1E3A5F] mb-2">Example: "abc" → "ac"</p>
+<p class="text-sm text-[#2C3E50]"><strong>Path 1:</strong> Delete 'b' → "ac" (1 operation)</p>
+<p class="text-sm text-[#2C3E50]"><strong>Path 2:</strong> Substitute 'b' with '' → "ac" (1 operation)</p>
+<p class="text-sm text-[#E8913A] mt-2 font-semibold">Minimum: 1 operation</p>
+</div>
+<div class="bg-white p-3 rounded border-l-4 border-[#4A90A4]">
+<p class="font-semibold text-[#1E3A5F] mb-2">Example: "cat" → "cut"</p>
+<p class="text-sm text-[#2C3E50]"><strong>Path 1:</strong> Substitute 'a' with 'u' (1 operation)</p>
+<p class="text-sm text-[#2C3E50]"><strong>Path 2:</strong> Delete 'a', insert 'u' (2 operations)</p>
+<p class="text-sm text-[#E8913A] mt-2 font-semibold">Minimum: 1 operation</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 26: Dynamic Programming -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Algorithm</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Dynamic Programming Approach</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div>
+<h3 class="text-xl font-bold text-[#1E3A5F] mb-3">The Problem with Brute Force</h3>
+<p class="text-base text-[#2C3E50] leading-relaxed mb-3">Trying all possible sequences of operations results in <strong>exponential time complexity</strong> O(3<sup>n</sup>)—impractical for long strings.</p>
+<p class="text-base text-[#2C3E50] leading-relaxed">We need a smarter approach that <strong>reuses solutions to subproblems</strong>.</p>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<h3 class="text-lg font-bold mb-3">Dynamic Programming Insight</h3>
+<p class="text-sm text-white/90 mb-3">The Wagner-Fischer algorithm (1974) builds a matrix where each cell D[i][j] contains the edit distance between:</p>
+<div class="bg-white/10 p-3 rounded">
+<p class="text-base text-center">First <strong>i</strong> characters of string 1<br/>↓<br/>First <strong>j</strong> characters of string 2</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Key Principle</h3>
+<p class="text-base text-[#2C3E50]">If we know the edit distance for all prefixes, we can compute the edit distance for longer strings by considering just <strong>one more operation</strong>.</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Recurrence Relation</h3>
+<div class="bg-white p-4 rounded">
+<p class="text-base text-[#2C3E50] mb-3">To compute D[i][j]:</p>
+<div class="space-y-2 text-base">
+<p><strong>If characters match:</strong></p>
+<p class="ml-4 text-[#4A90A4] font-semibold">D[i][j] = D[i-1][j-1]</p>
+<p class="mt-2"><strong>If characters differ:</strong></p>
+<p class="ml-4 text-[#E8913A] font-semibold">D[i][j] = 1 + min(</p>
+<p class="ml-8">D[i-1][j],    // deletion</p>
+<p class="ml-8">D[i][j-1],    // insertion</p>
+<p class="ml-8">D[i-1][j-1]  // substitution</p>
+<p class="ml-4 text-[#E8913A] font-semibold">)</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Algorithm Steps</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-sm shrink-0">1</div>
+<p class="text-base text-[#2C3E50]">Create matrix of size (m+1) × (n+1)</p>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#4A90A4] flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+<p class="text-base text-[#2C3E50]">Initialize first row (0 to n) and first column (0 to m)</p>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-sm shrink-0">3</div>
+<p class="text-base text-[#2C3E50]">Fill remaining cells using recurrence relation</p>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-bold text-sm shrink-0">4</div>
+<p class="text-base text-[#2C3E50]">Result is in bottom-right cell D[m][n]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 27: Building the Matrix -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Walkthrough</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Building the Edit Distance Matrix</h2>
+</div>
+<div class="grid grid-cols-2 gap-5">
+<div class="space-y-4">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Example: "FOOD" → "MONEY"</h3>
+<p class="text-base text-[#2C3E50] mb-3">We'll build a 5×6 matrix (including empty string).</p>
+<div class="bg-white p-3 rounded border-2 border-[#1E3A5F]">
+<table class="w-full text-center text-sm">
+<tr class="bg-[#1E3A5F] text-white">
+<td class="p-1"></td>
+<td class="p-1">""</td>
+<td class="p-1">M</td>
+<td class="p-1">O</td>
+<td class="p-1">N</td>
+<td class="p-1">E</td>
+<td class="p-1">Y</td>
+</tr>
+<tr class="bg-[#4A90A4]/20">
+<td class="p-1 bg-[#1E3A5F] text-white">""</td>
+<td class="p-1 font-bold">0</td>
+<td class="p-1">1</td>
+<td class="p-1">2</td>
+<td class="p-1">3</td>
+<td class="p-1">4</td>
+<td class="p-1">5</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">F</td>
+<td class="p-1 bg-[#4A90A4]/20">1</td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">O</td>
+<td class="p-1 bg-[#4A90A4]/20">2</td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">O</td>
+<td class="p-1 bg-[#4A90A4]/20">3</td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">D</td>
+<td class="p-1 bg-[#4A90A4]/20">4</td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+<td class="p-1"></td>
+</tr>
+</table>
+</div>
+<p class="text-sm text-[#2C3E50] mt-2">Initialize: First row = 0,1,2,3,4,5 (insertions)</p>
+<p class="text-sm text-[#2C3E50]">Initialize: First column = 0,1,2,3,4 (deletions)</p>
+</div>
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-base font-bold text-[#1E3A5F] mb-2">Filling a Cell: D[1][1] (F → M)</h3>
+<p class="text-sm text-[#2C3E50] mb-1">F ≠ M, so we need 1 + min of:</p>
+<ul class="text-sm text-[#2C3E50] space-y-1 ml-4">
+<li>• D[0][1] = 1 (deletion)</li>
+<li>• D[1][0] = 1 (insertion)</li>
+<li>• D[0][0] = 0 (substitution)</li>
+</ul>
+<p class="text-sm text-[#E8913A] font-semibold mt-2">D[1][1] = 1 + min(1, 1, 0) = 1</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Complete Matrix</h3>
+<div class="bg-white p-3 rounded border-2 border-[#4A90A4]">
+<table class="w-full text-center text-sm">
+<tr class="bg-[#1E3A5F] text-white">
+<td class="p-1"></td>
+<td class="p-1">""</td>
+<td class="p-1">M</td>
+<td class="p-1">O</td>
+<td class="p-1">N</td>
+<td class="p-1">E</td>
+<td class="p-1">Y</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#1E3A5F] text-white">""</td>
+<td class="p-1 bg-[#E8913A]/30 font-bold">0</td>
+<td class="p-1">1</td>
+<td class="p-1">2</td>
+<td class="p-1">3</td>
+<td class="p-1">4</td>
+<td class="p-1">5</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">F</td>
+<td class="p-1">1</td>
+<td class="p-1">1</td>
+<td class="p-1">2</td>
+<td class="p-1">3</td>
+<td class="p-1">4</td>
+<td class="p-1">5</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">O</td>
+<td class="p-1">2</td>
+<td class="p-1">2</td>
+<td class="p-1 bg-[#4A90A4]/30 font-bold">1</td>
+<td class="p-1">2</td>
+<td class="p-1">3</td>
+<td class="p-1">4</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">O</td>
+<td class="p-1">3</td>
+<td class="p-1">3</td>
+<td class="p-1">2</td>
+<td class="p-1">2</td>
+<td class="p-1">3</td>
+<td class="p-1">4</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">D</td>
+<td class="p-1">4</td>
+<td class="p-1">4</td>
+<td class="p-1">3</td>
+<td class="p-1">3</td>
+<td class="p-1">3</td>
+<td class="p-1 bg-[#E8913A]/30 font-bold">4</td>
+</tr>
+</table>
+</div>
+<div class="mt-3 bg-[#E8913A]/20 p-3 rounded text-center">
+<p class="text-xl font-bold text-[#1E3A5F]">Edit Distance = 4</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-3 rounded-lg text-white">
+<p class="text-base"><i class="fas fa-lightbulb text-[#E8913A] mr-2"></i><strong>Insight:</strong> The matrix shows edit distances for all prefixes, enabling us to find the optimal path.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 28: Complete Example -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-3">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Detailed Example</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Complete Example: INTENTION → EXECUTION</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Full Matrix (9×9)</h3>
+<div class="bg-white p-3 rounded border-2 border-[#1E3A5F] overflow-x-auto">
+<table class="w-full text-center text-sm">
+<tr class="bg-[#1E3A5F] text-white">
+<td class="p-1"></td><td class="p-1">""</td><td class="p-1">E</td><td class="p-1">X</td><td class="p-1">E</td><td class="p-1">C</td><td class="p-1">U</td><td class="p-1">T</td><td class="p-1">I</td><td class="p-1">O</td><td class="p-1">N</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">""</td>
+<td class="p-1 bg-[#E8913A]/30 font-bold">0</td><td class="p-1">1</td><td class="p-1">2</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">9</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">I</td>
+<td class="p-1">1</td><td class="p-1">1</td><td class="p-1">2</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1 bg-[#4A90A4]/30 font-bold">6</td><td class="p-1">7</td><td class="p-1">8</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">N</td>
+<td class="p-1">2</td><td class="p-1">2</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">7</td><td class="p-1">7</td><td class="p-1 bg-[#4A90A4]/30 font-bold">7</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">T</td>
+<td class="p-1">3</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1 bg-[#4A90A4]/30 font-bold">6</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">8</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">E</td>
+<td class="p-1">4</td><td class="p-1 bg-[#4A90A4]/30 font-bold">3</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1">9</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">N</td>
+<td class="p-1">5</td><td class="p-1">4</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1">10</td><td class="p-1 bg-[#4A90A4]/30 font-bold">8</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">T</td>
+<td class="p-1">6</td><td class="p-1">5</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1 bg-[#4A90A4]/30 font-bold">8</td><td class="p-1">9</td><td class="p-1">10</td><td class="p-1">9</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">I</td>
+<td class="p-1">7</td><td class="p-1">6</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1">10</td><td class="p-1">9</td><td class="p-1 bg-[#4A90A4]/30 font-bold">8</td><td class="p-1">9</td><td class="p-1">10</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">O</td>
+<td class="p-1">8</td><td class="p-1">7</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1">10</td><td class="p-1">11</td><td class="p-1">10</td><td class="p-1">9</td><td class="p-1 bg-[#4A90A4]/30 font-bold">8</td><td class="p-1">9</td>
+</tr>
+<tr>
+<td class="p-1 bg-[#4A90A4] text-white">N</td>
+<td class="p-1">9</td><td class="p-1">8</td><td class="p-1">9</td><td class="p-1">10</td><td class="p-1">11</td><td class="p-1">12</td><td class="p-1">11</td><td class="p-1">10</td><td class="p-1">9</td><td class="p-1 bg-[#E8913A] font-bold text-white">8</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Optimal Path (5 Operations)</h3>
+<div class="space-y-1 text-base text-[#2C3E50]">
+<p><strong>1.</strong> <span style="color: #E8913A; font-weight: bold;">I</span>NTENTION → <span style="color: #E8913A; font-weight: bold;">E</span>NTENTION (substitute I→E)</p>
+<p><strong>2.</strong> E<span style="color: #E8913A; font-weight: bold;">N</span>TENTION → E<span style="color: #E8913A; font-weight: bold;">X</span>ECUTION (substitute N→X)</p>
+<p><strong>3.</strong> EXE<span style="color: #E8913A; font-weight: bold;">C</span>UTION (insert C after E)</p>
+<p><strong>4.</strong> EXECU<span style="color: #E8913A; font-weight: bold;">U</span>TION (insert U after U)</p>
+<p><strong>5.</strong> EXECUTI<span style="color: #E8913A; font-weight: bold;">O</span>N → EXECUTIO<span style="color: #E8913A; font-weight: bold;">N</span> (substitute O→N)</p>
+</div>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white flex flex-col justify-center">
+<div class="text-center">
+<p class="text-lg mb-3">Minimum Edit Distance</p>
+<p class="text-6xl font-bold text-[#E8913A]">5</p>
+<p class="text-base text-white/80 mt-3">Bottom-right cell of the matrix</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 29: Applications -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Real-World Uses</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Applications of Edit Distance in NLP</h2>
+</div>
+<div class="grid grid-cols-3 gap-3 mb-3">
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-spell-check text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Spell Checking</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Find closest valid words for misspellings</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">"accomodate" → "accommodate"</p>
+<p class="text-xs text-[#E8913A] mt-1">Distance = 1 (double 'c', 'm')</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-dna text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Bioinformatics</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">DNA/RNA sequence alignment</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">Compare genetic sequences</p>
+<p class="text-xs text-[#E8913A] mt-1">Find evolutionary relationships</p>
+</div>
+</div>
+<div class="bg-[#E8913A] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-copy text-white text-2xl"></i>
+<h3 class="text-lg font-bold">Plagiarism Detection</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Measure similarity between documents</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">Detect paraphrased content</p>
+<p class="text-xs text-white/90 mt-1">Identify copied passages</p>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-language text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Translation Evaluation</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">BLEU, METEOR metrics use edit distance</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">Compare machine vs human translation</p>
+<p class="text-xs text-[#E8913A] mt-1">Score translation quality</p>
+</div>
+</div>
+<div class="bg-[#1E3A5F] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-microphone text-[#E8913A] text-2xl"></i>
+<h3 class="text-lg font-bold">Speech Recognition</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Error analysis and correction</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">Match recognized vs intended text</p>
+<p class="text-xs text-[#E8913A] mt-1">Improve ASR accuracy</p>
+</div>
+</div>
+<div class="bg-[#E8913A] p-4 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-3">
+<i class="fas fa-link text-white text-2xl"></i>
+<h3 class="text-lg font-bold">Fuzzy Matching</h3>
+</div>
+<p class="text-sm text-white/90 mb-2">Record linkage and deduplication</p>
+<div class="bg-white/10 p-2 rounded">
+<p class="text-sm">Match names with variations</p>
+<p class="text-xs text-white/90 mt-1">"John Smith" ≈ "Jon Smyth"</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Beyond NLP: Other Domains</h3>
+<div class="grid grid-cols-4 gap-3">
+<div class="bg-white p-3 rounded text-center">
+<i class="fas fa-code text-[#1E3A5F] text-2xl mb-2"></i>
+<p class="font-semibold text-sm text-[#1E3A5F]">Version Control</p>
+<p class="text-xs text-[#2C3E50]">Git diff algorithms</p>
+</div>
+<div class="bg-white p-3 rounded text-center">
+<i class="fas fa-music text-[#4A90A4] text-2xl mb-2"></i>
+<p class="font-semibold text-sm text-[#1E3A5F]">Music</p>
+<p class="text-xs text-[#2C3E50]">Melody comparison</p>
+</div>
+<div class="bg-white p-3 rounded text-center">
+<i class="fas fa-image text-[#E8913A] text-2xl mb-2"></i>
+<p class="font-semibold text-sm text-[#1E3A5F]">Computer Vision</p>
+<p class="text-xs text-[#2C3E50]">Image feature matching</p>
+</div>
+<div class="bg-white p-3 rounded text-center">
+<i class="fas fa-fingerprint text-[#1E3A5F] text-2xl mb-2"></i>
+<p class="font-semibold text-sm text-[#1E3A5F]">Biometrics</p>
+<p class="text-xs text-[#2C3E50]">Fingerprint matching</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 30: Python Implementation -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-4">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Code</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Python Implementation</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-3">
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Complete Edit Distance Function</h3>
+<div class="code-block text-sm">
+<p>def edit_distance(s1, s2):</p>
+<p>    m, n = len(s1), len(s2)</p>
+<p>    </p>
+<p>    # Create matrix</p>
+<p>    dp = [[0] * (n + 1) for _ in range(m + 1)]</p>
+<p>    </p>
+<p>    # Initialize first row and column</p>
+<p>    for i in range(m + 1):</p>
+<p>        dp[i][0] = i</p>
+<p>    for j in range(n + 1):</p>
+<p>        dp[0][j] = j</p>
+<p>    </p>
+<p>    # Fill the matrix</p>
+<p>    for i in range(1, m + 1):</p>
+<p>        for j in range(1, n + 1):</p>
+<p>            if s1[i-1] == s2[j-1]:</p>
+<p>                dp[i][j] = dp[i-1][j-1]</p>
+<p>            else:</p>
+<p>                dp[i][j] = 1 + min(</p>
+<p>                    dp[i-1][j],    # delete</p>
+<p>                    dp[i][j-1],    # insert</p>
+<p>                    dp[i-1][j-1]   # substitute</p>
+<p>                )</p>
+<p>    </p>
+<p>    return dp[m][n]</p>
+</div>
+</div>
+<div class="bg-[#4A90A4]/10 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-2">Using Python Libraries</h3>
+<div class="code-block text-sm">
+<p># Option 1: python-Levenshtein</p>
+<p>import Levenshtein</p>
+<p>distance = Levenshtein.distance("kitten", "sitting")</p>
+<p># Returns: 3</p>
+<p></p>
+<p># Option 2: jellyfish</p>
+<p>import jellyfish</p>
+<p>distance = jellyfish.levenshtein_distance("kitten", "sitting")</p>
+<p># Returns: 3</p>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Example Usage</h3>
+<div class="code-block text-sm">
+<p># Test the function</p>
+<p>s1, s2 = "kitten", "sitting"</p>
+<p>dist = edit_distance(s1, s2)</p>
+<p>print(f"Distance: {dist}")</p>
+<p># Output: Distance: 3</p>
+<p></p>
+<p># Spell checker example</p>
+<p>dictionary = ["apple", "apply", "apart", "ape"]</p>
+<p>misspelled = "aple"</p>
+<p>suggestions = sorted(dictionary, </p>
+<p>    key=lambda w: edit_distance(w, misspelled))</p>
+<p>print(suggestions[:3])</p>
+<p># Output: ['apple', 'apply', 'apart']</p>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Variations</h3>
+<div class="space-y-2 text-base text-[#2C3E50]">
+<p><strong>• Damerau-Levenshtein:</strong> Adds transposition (swapping adjacent characters)</p>
+<p><strong>• Weighted Edit Distance:</strong> Different costs for different operations</p>
+<p><strong>• Longest Common Subsequence (LCS):</strong> Related problem, finds shared sequence</p>
+<p><strong>• Hamming Distance:</strong> Only substitutions, strings must be same length</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 31: Complexity Analysis -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="content">
+<div class="mb-5">
+<p class="text-[#E8913A] text-sm font-bold tracking-[0.2em] mb-2 uppercase">Analysis</p>
+<h2 class="text-[40px] font-bold text-[#1E3A5F] leading-tight">Complexity Analysis</h2>
+</div>
+<div class="grid grid-cols-2 gap-5 mb-4">
+<div class="bg-[#1E3A5F] p-5 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-4">
+<i class="fas fa-clock text-[#E8913A] text-3xl"></i>
+<h3 class="text-2xl font-bold">Time Complexity</h3>
+</div>
+<div class="bg-white/10 p-4 rounded mb-4">
+<p class="text-4xl font-bold text-[#E8913A] mb-2">O(m × n)</p>
+<p class="text-base">Where m and n are the lengths of the two strings</p>
+</div>
+<p class="text-base text-white/90">We fill a matrix with (m+1) × (n+1) cells, and each cell takes O(1) time to compute.</p>
+</div>
+<div class="bg-[#4A90A4] p-5 rounded-lg text-white">
+<div class="flex items-center gap-3 mb-4">
+<i class="fas fa-memory text-[#E8913A] text-3xl"></i>
+<h3 class="text-2xl font-bold">Space Complexity</h3>
+</div>
+<div class="bg-white/10 p-4 rounded mb-4">
+<p class="text-4xl font-bold text-[#E8913A] mb-2">O(m × n)</p>
+<p class="text-base">For storing the full DP matrix</p>
+</div>
+<p class="text-base text-white/90">Can be optimized to <strong>O(min(m, n))</strong> by storing only two rows at a time.</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="bg-[#E8913A]/10 p-4 rounded-lg border-l-4 border-[#E8913A]">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Comparison: Brute Force vs Dynamic Programming</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white p-3 rounded">
+<p class="font-semibold text-[#1E3A5F] mb-2"><i class="fas fa-times-circle text-red-600 mr-2"></i>Brute Force</p>
+<p class="text-sm text-[#2C3E50] mb-1"><strong>Time:</strong> O(3<sup>max(m,n)</sup>)</p>
+<p class="text-sm text-[#2C3E50]">Exponential - tries all possible paths</p>
+</div>
+<div class="bg-white p-3 rounded">
+<p class="font-semibold text-[#1E3A5F] mb-2"><i class="fas fa-check-circle text-green-600 mr-2"></i>Dynamic Programming</p>
+<p class="text-sm text-[#2C3E50] mb-1"><strong>Time:</strong> O(m × n)</p>
+<p class="text-sm text-[#2C3E50]">Polynomial - reuses subproblem solutions</p>
+</div>
+</div>
+</div>
+<div class="bg-[#1E3A5F]/5 p-4 rounded-lg">
+<h3 class="text-lg font-bold text-[#1E3A5F] mb-3">Practical Considerations</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-white p-3 rounded text-center">
+<p class="font-semibold text-[#1E3A5F] text-sm mb-1">Short Strings</p>
+<p class="text-xs text-[#2C3E50]">Very fast, negligible time</p>
+</div>
+<div class="bg-white p-3 rounded text-center">
+<p class="font-semibold text-[#1E3A5F] text-sm mb-1">Medium Strings</p>
+<p class="text-xs text-[#2C3E50]">100 chars: ~10k operations</p>
+</div>
+<div class="bg-white p-3 rounded text-center">
+<p class="font-semibold text-[#1E3A5F] text-sm mb-1">Long Strings</p>
+<p class="text-xs text-[#2C3E50]">Use optimized versions</p>
+</div>
+</div>
+</div>
+<div class="bg-[#4A90A4] p-3 rounded-lg text-white">
+<p class="text-base"><i class="fas fa-lightbulb text-[#E8913A] mr-2"></i><strong>Optimization Tip:</strong> For very long strings, consider using a threshold—if edit distance exceeds a value, stop early.</p>
+</div>
+</div>
+</div>
+<!-- Slide 32: Final -->
+<div class="ppt-slide !bg-[#FFFFFF]" type="final">
+<img alt="Final" class="absolute inset-0 w-full h-full object-cover" src="./nlp_final.png"/>
+<div class="absolute inset-0 bg-gradient-to-br from-[#1E3A5F]/95 via-[#4A90A4]/90 to-[#1E3A5F]/95"></div>
+<div class="relative h-full flex flex-col justify-center z-10">
+<div class="max-w-[1000px]">
+<h1 class="text-[56px] font-bold text-[#F8F9FA] leading-tight mb-8">Key Takeaways</h1>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-12 h-12 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-xl shrink-0">01</div>
+<h3 class="text-xl font-bold text-[#F8F9FA]">NLP Evolution</h3>
+</div>
+<p class="text-base text-[#F8F9FA]/90">Four eras: Rule-based → Symbolic → Statistical → Deep Learning. Understanding history helps appreciate current capabilities.</p>
+</div>
+<div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-12 h-12 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-xl shrink-0">02</div>
+<h3 class="text-xl font-bold text-[#F8F9FA]">Regex Power</h3>
+</div>
+<p class="text-base text-[#F8F9FA]/90">Pattern matching is fundamental for text cleaning and extraction. Master regex for efficient preprocessing.</p>
+</div>
+<div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-12 h-12 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-xl shrink-0">03</div>
+<h3 class="text-xl font-bold text-[#F8F9FA]">Normalization Pipeline</h3>
+</div>
+<p class="text-base text-[#F8F9FA]/90">Tokenization → Stopword removal → Stemming/Lemmatization. Choose based on task requirements.</p>
+</div>
+<div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-12 h-12 rounded-full bg-[#E8913A] flex items-center justify-center text-white font-bold text-xl shrink-0">04</div>
+<h3 class="text-xl font-bold text-[#F8F9FA]">Edit Distance</h3>
+</div>
+<p class="text-base text-[#F8F9FA]/90">Dynamic programming enables efficient string comparison. O(m×n) time vs exponential brute force.</p>
+</div>
+</div>
+<div class="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+<p class="text-xl text-[#F8F9FA] leading-relaxed text-center">These foundations enable all modern NLP applications—from search engines to chatbots, from translation to sentiment analysis. <strong class="text-[#E8913A]">Master the basics, build the future.</strong></p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

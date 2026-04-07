@@ -1,0 +1,196 @@
+{
+  "pages": [
+    {
+      "number": 1,
+      "type": "cover",
+      "title": "Text Pre-processing and Word Level Analysis",
+      "content": "Foundations of Natural Language Processing"
+    },
+    {
+      "number": 2,
+      "type": "table_of_contents",
+      "title": "Learning Journey",
+      "content": "1. Origins and Challenges of NLP; 2. Regular Expressions; 3. Words, Corpora, and Text Normalization; 4. Minimum Edit Distance"
+    },
+    {
+      "number": 3,
+      "type": "chapter",
+      "title": "01: Foundations",
+      "content": "Origins and Challenges of NLP"
+    },
+    {
+      "number": 4,
+      "type": "content",
+      "title": "What is Natural Language Processing?",
+      "content": "Define NLP as the intersection of linguistics, computer science, and artificial intelligence. Explain how NLP enables computers to understand, interpret, and generate human language. Cover core objectives like understanding meaning, analyzing structure, and generating human-like language."
+    },
+    {
+      "number": 5,
+      "type": "content",
+      "title": "The Four Eras of NLP Evolution",
+      "content": "Present the historical timeline: 1940-1969 Early Explorations with machine translation focus; 1970-1992 Hand-built symbolic systems era; 1993-2012 Statistical and probabilistic NLP; 2013-present Deep learning and neural network revolution. Include key characteristics of each era."
+    },
+    {
+      "number": 6,
+      "type": "content",
+      "title": "Key Milestones in NLP History",
+      "content": "Highlight major breakthroughs: 1950 Turing Test proposal, 1954 Georgetown-IBM experiment, 1966 ELIZA chatbot creation, 1980s statistical models emergence, 1997 LSTM networks, 2017 Transformer architecture, 2018 GPT-1 release, 2020 GPT-3 with 175B parameters. Show progression from rule-based to modern LLMs."
+    },
+    {
+      "number": 7,
+      "type": "content",
+      "title": "Major Challenges in NLP",
+      "content": "Explain the fundamental challenges: language ambiguity and polysemy, context-dependent interpretation, training data quality and availability, handling misspellings and errors, bias in algorithms, multilingual diversity with 7000+ languages, uncertainty and false positives, maintaining context in conversations. Use examples for each challenge."
+    },
+    {
+      "number": 8,
+      "type": "content",
+      "title": "The Ambiguity Problem",
+      "content": "Deep dive into ambiguity as the core challenge: lexical ambiguity (words with multiple meanings), syntactic ambiguity (phrase structure), semantic ambiguity (meaning interpretation). Provide concrete examples like 'I saw her duck' and 'Flying planes can be dangerous' to illustrate different types of ambiguity."
+    },
+    {
+      "number": 9,
+      "type": "chapter",
+      "title": "02: Pattern Matching",
+      "content": "Regular Expressions in NLP"
+    },
+    {
+      "number": 10,
+      "type": "content",
+      "title": "Introduction to Regular Expressions",
+      "content": "Define regular expressions as a powerful pattern matching language for text manipulation. Explain their role in searching, matching, and manipulating strings based on specific patterns. Emphasize their importance as a fundamental tool in text preprocessing and information extraction."
+    },
+    {
+      "number": 11,
+      "type": "content",
+      "title": "Regex Building Blocks",
+      "content": "Present essential regex components: character classes (\d for digits, \w for word characters, \s for whitespace), quantifiers (* for 0+, + for 1+, ? for optional, {n,m} for ranges), anchors (^ for start, $ for end), and special characters. Include clear examples for each component."
+    },
+    {
+      "number": 12,
+      "type": "content",
+      "title": "Regex in Action: Practical Examples",
+      "content": "Demonstrate practical NLP applications: extracting email addresses with pattern [\w\.-]+@[\w\.-]+\.\w+, validating phone numbers in various formats, removing HTML tags, finding URLs, extracting dates. Show before and after examples to illustrate the power of pattern matching."
+    },
+    {
+      "number": 13,
+      "type": "content",
+      "title": "Python Regex for NLP",
+      "content": "Present Python's re module with key functions: re.match() for pattern matching at start, re.search() for finding first match, re.findall() for extracting all matches, re.sub() for replacement. Include code snippets showing how to compile patterns and process text data."
+    },
+    {
+      "number": 14,
+      "type": "chapter",
+      "title": "03: Text Preparation",
+      "content": "Words, Corpora, and Normalization"
+    },
+    {
+      "number": 15,
+      "type": "content",
+      "title": "Understanding Corpora",
+      "content": "Define a corpus as a large structured collection of texts used for linguistic analysis and model training. Explain different types: annotated vs unannotated, historical vs temporal, monolingual vs multilingual, domain-specific vs general. Discuss applications in lexicography, language teaching, and speech processing."
+    },
+    {
+      "number": 16,
+      "type": "content",
+      "title": "Popular NLP Corpora",
+      "content": "Introduce widely-used corpora: Brown Corpus (first million-word corpus), Penn Treebank (parsed sentences), WordNet (lexical database), Gutenberg Project (literary texts), Wikipedia dumps, Common Crawl (web data). Explain what makes each valuable for different NLP tasks."
+    },
+    {
+      "number": 17,
+      "type": "content",
+      "title": "The Text Normalization Pipeline",
+      "content": "Present the complete preprocessing workflow: raw text input → cleaning (regex) → normalization (lowercasing, punctuation removal) → tokenization → stopword removal → stemming/lemmatization → analysis-ready output. Emphasize that preprocessing is task-dependent."
+    },
+    {
+      "number": 18,
+      "type": "content",
+      "title": "Tokenization: Breaking Text into Units",
+      "content": "Explain tokenization as the process of splitting text into meaningful units (tokens). Cover word tokenization, sentence tokenization, and subword tokenization. Discuss challenges with languages that don't use spaces and modern approaches like Byte-Pair Encoding (BPE) and SentencePiece used in BERT and GPT."
+    },
+    {
+      "number": 19,
+      "type": "content",
+      "title": "Stemming: Reducing Words to Roots",
+      "content": "Define stemming as rule-based reduction of words to their root form. Focus on Porter Stemmer as the most popular algorithm. Explain the 5-step process: Step 1 handles plurals and participles, Step 2 deals with suffixes like -ational, Step 3 reduces complex suffixes, Step 4 checks for -al/-ance, Step 5 does final cleanup. Show examples like running→run, studies→studi."
+    },
+    {
+      "number": 20,
+      "type": "content",
+      "title": "Lemmatization: Dictionary-Based Reduction",
+      "content": "Explain lemmatization as the process of reducing words to their valid dictionary form (lemma) using vocabulary and morphological analysis. Contrast with stemming: lemmatization produces real words (better→good, studies→study, mice→mouse) but is slower. Introduce WordNet as the lexical database behind most lemmatizers."
+    },
+    {
+      "number": 21,
+      "type": "content",
+      "title": "Stemming vs Lemmatization: When to Use Each",
+      "content": "Compare the two approaches with clear trade-offs: stemming is faster but produces non-words, suitable for information retrieval and search engines; lemmatization is more accurate but computationally expensive, preferred for semantic analysis, chatbots, and tasks requiring linguistic correctness. Provide decision framework based on application requirements."
+    },
+    {
+      "number": 22,
+      "type": "content",
+      "title": "NLTK in Action: Code Examples",
+      "content": "Present practical Python implementations using NLTK: word_tokenize and sent_tokenize for tokenization, PorterStemmer for stemming, WordNetLemmatizer for lemmatization, stopwords removal. Include complete code snippets with expected outputs to demonstrate the preprocessing pipeline in practice."
+    },
+    {
+      "number": 23,
+      "type": "chapter",
+      "title": "04: String Comparison",
+      "content": "Minimum Edit Distance"
+    },
+    {
+      "number": 24,
+      "type": "content",
+      "title": "What is Minimum Edit Distance?",
+      "content": "Define minimum edit distance as the minimum number of single-character operations (insertions, deletions, substitutions) required to transform one string into another. Introduce Levenshtein distance as the most common variant where all operations cost 1. Use intuitive example like transforming 'kitten' to 'sitting' in 3 steps."
+    },
+    {
+      "number": 25,
+      "type": "content",
+      "title": "The Three Operations Explained",
+      "content": "Detail each operation with examples: Insertion (add a character, e.g., 'sit' → 'sitt'), Deletion (remove a character, e.g., 'kitten' → 'kiten'), Substitution (replace one character with another, e.g., 'kitten' → 'sitten'). Show how different sequences of operations can achieve the same transformation."
+    },
+    {
+      "number": 26,
+      "type": "content",
+      "title": "Dynamic Programming Approach",
+      "content": "Explain why brute force is exponential and introduce dynamic programming as the efficient solution. Present the Wagner-Fischer algorithm that builds a matrix where each cell D[i][j] represents the edit distance between first i characters of string1 and first j characters of string2. Emphasize the reuse of subproblem solutions."
+    },
+    {
+      "number": 27,
+      "type": "content",
+      "title": "Building the Edit Distance Matrix",
+      "content": "Walk through the matrix construction process: initialize first row (0 to n) and first column (0 to m), then fill remaining cells using recurrence relation. If characters match, take diagonal value; else take 1 + minimum of deletion, insertion, substitution. Show step-by-step matrix filling with concrete example."
+    },
+    {
+      "number": 28,
+      "type": "content",
+      "title": "Complete Example: INTENTION → EXECUTION",
+      "content": "Present the classic example with full matrix visualization. Show the 8×9 matrix being filled step by step, with the final answer of 5 operations in the bottom-right cell. Trace back the optimal path to reveal the actual operations: delete 'i', substitute 'n'→'e', substitute 't'→'x', insert 'u', substitute 'n'→'c'."
+    },
+    {
+      "number": 29,
+      "type": "content",
+      "title": "Applications of Edit Distance in NLP",
+      "content": "Explore practical applications: spell checking and correction (finding closest valid words), DNA sequence alignment in bioinformatics, plagiarism detection, machine translation evaluation (BLEU score), fuzzy string matching for record linkage, speech recognition error analysis. Emphasize versatility beyond NLP."
+    },
+    {
+      "number": 30,
+      "type": "content",
+      "title": "Python Implementation",
+      "content": "Provide complete Python code for computing edit distance using dynamic programming. Include the function that creates the matrix, fills it using the recurrence relation, and returns the final distance. Show example usage with output to make it runnable and understandable."
+    },
+    {
+      "number": 31,
+      "type": "content",
+      "title": "Complexity Analysis",
+      "content": "Analyze time and space complexity: O(m×n) time where m and n are string lengths, O(m×n) space for the full matrix. Mention space optimization to O(min(m,n)) by only keeping two rows. Compare with exponential brute force to highlight why dynamic programming is essential."
+    },
+    {
+      "number": 32,
+      "type": "final",
+      "title": "Key Takeaways",
+      "content": "NLP has evolved through four eras from rule-based systems to modern deep learning. Regular expressions provide powerful pattern matching for text preprocessing. Text normalization transforms raw text into analysis-ready format through tokenization, stemming, and lemmatization. Minimum edit distance measures string similarity using dynamic programming. These foundations enable all modern NLP applications."
+    }
+  ]
+}
